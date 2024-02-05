@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Breadcrumbs, Link, Tab, Tabs } from "@mui/material";
 import Widgets from "./Widgets";
 import { useEffect, useState } from "react";
 import { getInObj, setInObj } from "@opentf/utils";
@@ -47,6 +47,45 @@ export default function UIBuilder() {
     setState({ ...state, UI });
   };
 
+  const renderBreadcrumbItems = () => {
+    if (state.UI.Root === null) {
+      return null;
+    }
+
+    const setSelectionPath = (path: string) => {
+      setState((s) => ({ ...s, selectionPath: path }));
+    };
+
+    const items = [
+      <Link
+        key="root"
+        underline="hover"
+        onClick={() => setSelectionPath("Root")}
+      >
+        Root
+      </Link>,
+    ];
+
+    const arr = state.selectionPath.split(".");
+    let curPath = "Root";
+    arr.slice(1).forEach((str, i) => {
+      const curSelPath = curPath + "." + str;
+      curPath = curSelPath;
+      const obj = getInObj(state.UI, curPath);
+      items.push(
+        <Link
+          key={i}
+          underline="hover"
+          onClick={() => setSelectionPath(curSelPath)}
+        >
+          {obj?.name}
+        </Link>
+      );
+    });
+
+    return items;
+  };
+
   return (
     <>
       <Tabs value={tab} onChange={(e, val) => setTab(val)} centered>
@@ -54,6 +93,11 @@ export default function UIBuilder() {
         <Tab label="Code" />
       </Tabs>
       <Box sx={{ p: 3, height: "700px" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <Breadcrumbs separator="›" aria-label="breadcrumb">
+            {renderBreadcrumbItems()}
+          </Breadcrumbs>
+        </Box>
         <Box
           sx={{
             display: "grid",
