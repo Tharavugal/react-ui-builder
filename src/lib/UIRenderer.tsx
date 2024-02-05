@@ -1,7 +1,10 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 
-export default function UIRenderer({ tree }) {
-  const renderComponent = (obj, key = 0) => {
+export default function UIRenderer({ tree, selectionPath, onSelect }) {
+  const renderComponent = (obj, path, key = null) => {
+    const compCurPath = key === null ? path : path + `.children[${key}]`;
+    console.log(compCurPath);
+
     if (!obj) {
       return null;
     }
@@ -10,8 +13,20 @@ export default function UIRenderer({ tree }) {
         const { sx, ...otherProps } = obj.props;
 
         return (
-          <Box key={key} sx={sx} {...otherProps}>
-            {renderChildren(obj.children)}
+          <Box
+            key={key}
+            sx={{
+              ...sx,
+              border:
+                selectionPath === compCurPath ? "1px dashed red" : undefined,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(compCurPath);
+            }}
+            {...otherProps}
+          >
+            {renderChildren(obj.children, compCurPath)}
           </Box>
         );
       }
@@ -32,7 +47,19 @@ export default function UIRenderer({ tree }) {
         const { text, sx, ...otherProps } = obj.props;
 
         return (
-          <Typography key={key} sx={sx} {...otherProps}>
+          <Typography
+            key={key}
+            sx={{
+              ...sx,
+              border:
+                selectionPath === compCurPath ? "1px dashed red" : undefined,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(compCurPath);
+            }}
+            {...otherProps}
+          >
             {text}
           </Typography>
         );
@@ -50,12 +77,12 @@ export default function UIRenderer({ tree }) {
     }
   };
 
-  const renderChildren = (chldrn) => {
+  const renderChildren = (chldrn, path) => {
     return chldrn.map((obj, i) => {
-      const comp = renderComponent(obj, i);
+      const comp = renderComponent(obj, path, i);
       return comp;
     });
   };
 
-  return <Box>{renderComponent(tree)}</Box>;
+  return <Box>{renderComponent(tree, "")}</Box>;
 }

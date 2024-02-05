@@ -7,14 +7,13 @@ import UIRenderer from "./UIRenderer";
 import PropsEditor from "./PropsEditor";
 import HeadingWidget from "./widgets/Heading";
 import BoxWidget from "./widgets/Box";
+import BreadCrumbs from "./BreadCrumbs";
 
 export default function UIBuilder() {
   const [tab, setTab] = useState(0);
   const [state, setState] = useState({
-    UI: {
-      Root: null,
-    },
-    selectionPath: "Root",
+    UI: {},
+    selectionPath: "",
   });
   const widgets = [BoxWidget(), HeadingWidget()];
 
@@ -22,7 +21,7 @@ export default function UIBuilder() {
     const boxWidget = BoxWidget();
     setState((s) => ({
       ...s,
-      UI: { Root: { name: boxWidget.name, ...boxWidget.component } },
+      UI: { name: boxWidget.name, ...boxWidget.component },
     }));
   }, []);
 
@@ -47,43 +46,8 @@ export default function UIBuilder() {
     setState({ ...state, UI });
   };
 
-  const renderBreadcrumbItems = () => {
-    if (state.UI.Root === null) {
-      return null;
-    }
-
-    const setSelectionPath = (path: string) => {
-      setState((s) => ({ ...s, selectionPath: path }));
-    };
-
-    const items = [
-      <Link
-        key="root"
-        underline="hover"
-        onClick={() => setSelectionPath("Root")}
-      >
-        Root
-      </Link>,
-    ];
-
-    const arr = state.selectionPath.split(".");
-    let curPath = "Root";
-    arr.slice(1).forEach((str, i) => {
-      const curSelPath = curPath + "." + str;
-      curPath = curSelPath;
-      const obj = getInObj(state.UI, curPath);
-      items.push(
-        <Link
-          key={i}
-          underline="hover"
-          onClick={() => setSelectionPath(curSelPath)}
-        >
-          {obj?.name}
-        </Link>
-      );
-    });
-
-    return items;
+  const setSelectionPath = (path: string) => {
+    setState((s) => ({ ...s, selectionPath: path }));
   };
 
   return (
@@ -94,9 +58,11 @@ export default function UIBuilder() {
       </Tabs>
       <Box sx={{ p: 3, height: "700px" }}>
         <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-          <Breadcrumbs separator="›" aria-label="breadcrumb">
-            {renderBreadcrumbItems()}
-          </Breadcrumbs>
+          <BreadCrumbs
+            UI={state.UI}
+            selectionPath={state.selectionPath}
+            setSelectionPath={setSelectionPath}
+          />
         </Box>
         <Box
           sx={{
@@ -115,7 +81,11 @@ export default function UIBuilder() {
             }}
           >
             {tab === 0 ? (
-              <UIRenderer tree={state.UI.Root} />
+              <UIRenderer
+                tree={state.UI}
+                selectionPath={state.selectionPath}
+                onSelect={setSelectionPath}
+              />
             ) : (
               <ReactJson
                 src={state.UI}
