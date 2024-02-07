@@ -21,6 +21,7 @@ export default function PropsEditor({ widgets, component, onUpdate }) {
         case "text":
           return (
             <TextField
+              multiline={pt.multi}
               sx={{ my: 1 }}
               key={i}
               label={pt.label}

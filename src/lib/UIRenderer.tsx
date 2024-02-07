@@ -64,6 +64,28 @@ export default function UIRenderer({ tree, selectionPath, onSelect }) {
           </Typography>
         );
       }
+      case "Text": {
+        const { text, sx, ...otherProps } = obj.props;
+
+        return (
+          <Typography
+            key={key}
+            sx={{
+              ...sx,
+              border:
+                selectionPath === compCurPath ? "1px dashed red" : undefined,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(compCurPath);
+            }}
+            variant="body1"
+            {...otherProps}
+          >
+            {text}
+          </Typography>
+        );
+      }
       case "Card": {
         const { sx, otherProps } = obj.props;
         return (

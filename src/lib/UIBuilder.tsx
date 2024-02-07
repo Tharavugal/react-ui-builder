@@ -8,6 +8,7 @@ import PropsEditor from "./PropsEditor";
 import HeadingWidget from "./widgets/Heading";
 import BoxWidget from "./widgets/Box";
 import BreadCrumbs from "./BreadCrumbs";
+import TextWidget from "./widgets/Text";
 
 export default function UIBuilder() {
   const [tab, setTab] = useState(0);
@@ -15,7 +16,7 @@ export default function UIBuilder() {
     UI: {},
     selectionPath: "",
   });
-  const widgets = [BoxWidget(), HeadingWidget()];
+  const widgets = [BoxWidget(), HeadingWidget(), TextWidget()];
 
   useEffect(() => {
     const boxWidget = BoxWidget();
