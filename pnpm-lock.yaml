@@ -21,8 +21,8 @@ dependencies:
     specifier: ^5.15.7
     version: 5.15.7(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.52)(react-dom@18.2.0)(react@18.2.0)
   '@opentf/utils':
-    specifier: ^0.22.1
-    version: 0.22.1
+    specifier: ^0.23.0
+    version: 0.23.0
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -730,8 +730,8 @@ packages:
       fastq: 1.17.0
     dev: true
 
-  /@opentf/utils@0.22.1:
-    resolution: {integrity: sha512-e8rZbdYxScpL0/NftsP8TEjAETycBRyGBAAGyGbT4HbbsG2spq5KKAtVaMNSB8OiHkde8pJ+6vuzom6LTBs2cw==}
+  /@opentf/utils@0.23.0:
+    resolution: {integrity: sha512-Ok0HjVKVbBwQQY8f9IpNBUEJUr5IKij0cMP1KjUeJNOk8jZuazA9KE/0DOezB20BOz6C9TcjNA103/aJUty3cw==}
     dev: false
 
   /@popperjs/core@2.11.8:

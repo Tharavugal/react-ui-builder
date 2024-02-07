@@ -3,11 +3,11 @@ import { Box, Card, CardContent, Typography } from "@mui/material";
 export default function UIRenderer({ tree, selectionPath, onSelect }) {
   const renderComponent = (obj, path, key = null) => {
     const compCurPath = key === null ? path : path + `.children[${key}]`;
-    console.log(compCurPath);
 
     if (!obj) {
       return null;
     }
+
     switch (obj.name) {
       case "Box": {
         const { sx, ...otherProps } = obj.props;

@@ -1,7 +1,7 @@
-import { Box, Breadcrumbs, Link, Tab, Tabs } from "@mui/material";
+import { Box, Button, Tab, Tabs } from "@mui/material";
 import Widgets from "./Widgets";
 import { useEffect, useState } from "react";
-import { getInObj, setInObj } from "@opentf/utils";
+import { getInObj, setInObj, delInObj } from "@opentf/utils";
 import ReactJson from "@microlink/react-json-view";
 import UIRenderer from "./UIRenderer";
 import PropsEditor from "./PropsEditor";
@@ -50,6 +50,21 @@ export default function UIBuilder() {
     setState((s) => ({ ...s, selectionPath: path }));
   };
 
+  const handleDelete = () => {
+    if (!state.selectionPath) {
+      return;
+    }
+
+    const UI = state.UI;
+    if (delInObj(UI, state.selectionPath)) {
+      const selectionPath = state.selectionPath
+        .split(".")
+        .slice(0, -1)
+        .join(".");
+      setState((s) => ({ ...s, UI, selectionPath }));
+    }
+  };
+
   return (
     <>
       <Tabs value={tab} onChange={(e, val) => setTab(val)} centered>
@@ -57,12 +72,20 @@ export default function UIBuilder() {
         <Tab label="Code" />
       </Tabs>
       <Box sx={{ p: 3, height: "700px" }}>
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <BreadCrumbs
             UI={state.UI}
             selectionPath={state.selectionPath}
             setSelectionPath={setSelectionPath}
           />
+          <Button
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
         </Box>
         <Box
           sx={{
