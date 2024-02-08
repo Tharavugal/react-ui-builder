@@ -45,7 +45,7 @@ export default function UIRenderer({
           renderChildren(obj.children, compCurPath)
         );
       }
-      case "Box": {
+      case "Container": {
         return createElement(
           Box,
           { sx: { ...styles }, ...props },

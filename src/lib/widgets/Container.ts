@@ -1,6 +1,6 @@
-export default function BoxWidget() {
+export default function ContainerWidget() {
   return {
-    name: "Box",
+    name: "Container",
     group: "Layout",
     component: {
       props: { sx: { p: 1 } },

@@ -6,7 +6,7 @@ import ReactJson from "@microlink/react-json-view";
 import UIRenderer from "./UIRenderer";
 import PropsEditor from "./PropsEditor";
 import HeadingWidget from "./widgets/Heading";
-import BoxWidget from "./widgets/Box";
+import ContainerWidget from "./widgets/Container";
 import BreadCrumbs from "./BreadCrumbs";
 import TextWidget from "./widgets/Text";
 import FlexWidget from "./widgets/Flex";
@@ -21,7 +21,7 @@ export default function UIBuilder() {
   });
   const widgets = [
     RootWidget(),
-    BoxWidget(),
+    ContainerWidget(),
     HeadingWidget(),
     TextWidget(),
     FlexWidget(),
