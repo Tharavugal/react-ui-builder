@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Divider, Typography } from "@mui/material";
 import { createElement } from "react";
 
 type Props = {
@@ -25,12 +25,12 @@ export default function UIRenderer({
 
     const compCurPath = key === null ? path : path + `.children[${key}]`;
     const { sx, ...otherProps } = obj.props as object;
-    const styles = { ...sx, p: 1 };
+    const styles = { ...sx };
     const props = { key, ...otherProps };
 
     if (edit) {
       styles["border"] =
-        selectionPath === compCurPath ? "1px dashed red" : "initial";
+        selectionPath === compCurPath ? "1px dashed red" : styles["border"];
       props["onClick"] = (e) => {
         e.stopPropagation();
         onSelect(compCurPath);
@@ -64,7 +64,7 @@ export default function UIRenderer({
         const { text, ...restProps } = props;
         return createElement(
           Typography,
-          { sx: { ...styles }, variant: "h6", ...restProps },
+          { sx: { p: 0, ...styles }, variant: "h6", ...restProps },
           text
         );
       }
@@ -74,6 +74,14 @@ export default function UIRenderer({
           Typography,
           { sx: { ...styles }, variant: "body1", ...restProps },
           text
+        );
+      }
+      case "Divider": {
+        const { ...restProps } = props;
+        return createElement(
+          Divider,
+          { sx: { borderColor: 'darkgray', ...styles }, ...restProps },
+          null
         );
       }
       case "Card": {

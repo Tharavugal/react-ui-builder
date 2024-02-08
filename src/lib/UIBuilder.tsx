@@ -11,6 +11,7 @@ import BreadCrumbs from "./BreadCrumbs";
 import TextWidget from "./widgets/Text";
 import FlexWidget from "./widgets/Flex";
 import RootWidget from "./widgets/Root";
+import DividerWidget from "./widgets/Divider";
 
 export default function UIBuilder() {
   const [tab, setTab] = useState(0);
@@ -24,6 +25,7 @@ export default function UIBuilder() {
     HeadingWidget(),
     TextWidget(),
     FlexWidget(),
+    DividerWidget()
   ];
 
   useEffect(() => {
