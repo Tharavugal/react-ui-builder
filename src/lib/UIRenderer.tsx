@@ -1,89 +1,79 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
+import { createElement } from "react";
 
-export default function UIRenderer({ tree, selectionPath, onSelect }) {
-  const renderComponent = (obj, path, key = null) => {
-    const compCurPath = key === null ? path : path + `.children[${key}]`;
+type Props = {
+  tree: Record<string, unknown>;
+  selectionPath: string;
+  onSelect: (p: string) => void;
+  edit: boolean;
+};
 
+export default function UIRenderer({
+  tree,
+  selectionPath,
+  onSelect,
+  edit = false,
+}: Props) {
+  const renderComponent = (
+    obj: Record<string, unknown>,
+    path: string,
+    key = null
+  ) => {
     if (!obj) {
       return null;
     }
 
-    switch (obj.name) {
-      case "Box": {
-        const { sx, ...otherProps } = obj.props;
+    const compCurPath = key === null ? path : path + `.children[${key}]`;
+    const { sx, ...otherProps } = obj.props as object;
+    const styles = { ...sx, p: 1 };
+    const props = { key, ...otherProps };
 
-        return (
-          <Box
-            key={key}
-            sx={{
-              ...sx,
-              border:
-                selectionPath === compCurPath ? "1px dashed red" : undefined,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(compCurPath);
-            }}
-            {...otherProps}
-          >
-            {renderChildren(obj.children, compCurPath)}
-          </Box>
+    if (edit) {
+      styles["border"] =
+        selectionPath === compCurPath ? "1px dashed red" : "initial";
+      props["onClick"] = (e) => {
+        e.stopPropagation();
+        onSelect(compCurPath);
+      };
+    }
+
+    switch (obj.name) {
+      case "Root": {
+        return createElement(
+          Box,
+          { key: "Root", sx: { ...styles } },
+          renderChildren(obj.children, compCurPath)
+        );
+      }
+      case "Box": {
+        return createElement(
+          Box,
+          { sx: { ...styles }, ...props },
+          renderChildren(obj.children, compCurPath)
         );
       }
       case "Flex": {
-        const { sx, ...otherProps } = obj.props;
-
-        return (
-          <Box
-            key={key}
-            sx={{ display: "flex", flexWrap: "wrap", p: 1, ...sx }}
-            {...otherProps}
-          >
-            {renderChildren(obj[name].children || [])}
-          </Box>
+        return createElement(
+          Box,
+          { sx: { ...styles, display: "flex", flexWrap: "wrap" }, ...props },
+          renderChildren(obj.children, compCurPath)
         );
       }
-      case "Heading": {
-        const { text, sx, ...otherProps } = obj.props;
 
-        return (
-          <Typography
-            key={key}
-            sx={{
-              ...sx,
-              border:
-                selectionPath === compCurPath ? "1px dashed red" : undefined,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(compCurPath);
-            }}
-            {...otherProps}
-          >
-            {text}
-          </Typography>
+      case "Heading": {
+        const { text, ...restProps } = props;
+        return createElement(
+          Typography,
+          { sx: { ...styles }, variant: "h6", ...restProps },
+          text
         );
       }
       case "Text": {
-        const { text, sx, ...otherProps } = obj.props;
-
-        return (
-          <Typography
-            key={key}
-            sx={{
-              ...sx,
-              border:
-                selectionPath === compCurPath ? "1px dashed red" : undefined,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(compCurPath);
-            }}
-            variant="body1"
-            {...otherProps}
-          >
-            {text}
-          </Typography>
+        const { text, ...restProps } = props;
+        return createElement(
+          Typography,
+          { sx: { ...styles }, variant: "body1", ...restProps },
+          text
         );
       }
       case "Card": {
@@ -101,8 +91,7 @@ export default function UIRenderer({ tree, selectionPath, onSelect }) {
 
   const renderChildren = (chldrn, path) => {
     return chldrn.map((obj, i) => {
-      const comp = renderComponent(obj, path, i);
-      return comp;
+      return renderComponent(obj, path, i);
     });
   };
 

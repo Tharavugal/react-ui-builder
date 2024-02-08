@@ -1,9 +1,9 @@
-export default function BoxWidget() {
+export default function RootWidget() {
   return {
-    name: "Box",
-    group: "Layout",
+    name: "Root",
+    group: null,
     component: {
-      props: { sx: { p: 1 } },
+      props: { sx: { p: 1, background: "white" } },
       children: [],
     },
     propTypes: [

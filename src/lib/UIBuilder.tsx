@@ -9,36 +9,59 @@ import HeadingWidget from "./widgets/Heading";
 import BoxWidget from "./widgets/Box";
 import BreadCrumbs from "./BreadCrumbs";
 import TextWidget from "./widgets/Text";
+import FlexWidget from "./widgets/Flex";
+import RootWidget from "./widgets/Root";
 
 export default function UIBuilder() {
   const [tab, setTab] = useState(0);
   const [state, setState] = useState({
-    UI: {},
+    UI: null,
     selectionPath: "",
   });
-  const widgets = [BoxWidget(), HeadingWidget(), TextWidget()];
+  const widgets = [
+    RootWidget(),
+    BoxWidget(),
+    HeadingWidget(),
+    TextWidget(),
+    FlexWidget(),
+  ];
 
   useEffect(() => {
-    const boxWidget = BoxWidget();
+    const rootWidget = RootWidget();
     setState((s) => ({
       ...s,
-      UI: { name: boxWidget.name, ...boxWidget.component },
+      UI: { name: rootWidget.name, ...rootWidget.component },
     }));
   }, []);
 
-  useEffect(() => {
-    console.log(state.selectionPath);
-  }, [state.selectionPath]);
+  const insert = (
+    name: string,
+    obj: Record<string, unknown>,
+    insertMode: string
+  ) => {
+    if (insertMode === "sibling" && state.selectionPath === "") {
+      return;
+    }
 
-  const insert = (name, obj) => {
-    const curObj = getInObj(state.UI, state.selectionPath) ?? state.UI;
-    const len = (curObj["children"] as Array<unknown>).push(obj);
-    const curSelectionPath = `${state.selectionPath}.children[${len - 1}]`;
-    const UI = setInObj(state.UI, curSelectionPath, { name, ...obj });
-    setState({ ...state, UI, selectionPath: curSelectionPath });
+    const objPath =
+      insertMode === "child"
+        ? state.selectionPath
+        : state.selectionPath.split(".").slice(0, -1).join(".");
+    const curObj = getInObj(state.UI, objPath) ?? state.UI;
+    const index =
+      insertMode === "child"
+        ? (curObj.children ?? []).length
+        : Number(state.selectionPath.split(".").slice(-1)[0].match(/\d+/)[0]) +
+          1;
+    const curSelectionPath = `${objPath}.children[${index}]`;
+    (curObj.children ?? []).splice(index, 0, { name, ...obj });
+    setState({
+      ...state,
+      selectionPath: curSelectionPath,
+    });
   };
 
-  const handlePropUpdate = (propName, val) => {
+  const handlePropUpdate = (propName: string, val: unknown) => {
     const UI = setInObj(
       state.UI,
       `${state.selectionPath}.props.${propName}`,
@@ -109,6 +132,7 @@ export default function UIBuilder() {
                 tree={state.UI}
                 selectionPath={state.selectionPath}
                 onSelect={setSelectionPath}
+                edit
               />
             ) : (
               <ReactJson

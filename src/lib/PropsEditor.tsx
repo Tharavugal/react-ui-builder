@@ -9,13 +9,13 @@ import {
 } from "@mui/material";
 
 export default function PropsEditor({ widgets, component, onUpdate }) {
+  if (!component) {
+    return null;
+  }
+
   const widget = widgets.find((w) => w.name === component.name);
 
   const renderFields = () => {
-    if (!widget) {
-      return null;
-    }
-
     const fields = widget.propTypes.map((pt, i) => {
       switch (pt.type) {
         case "text":

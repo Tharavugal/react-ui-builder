@@ -1,4 +1,6 @@
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, Stack, Switch, Typography } from "@mui/material";
+import { groupBy } from "@opentf/utils";
+import { useState } from "react";
 
 function Btn({ sx = {}, ...OtherProps }) {
   return (
@@ -12,11 +14,15 @@ function Btn({ sx = {}, ...OtherProps }) {
 }
 
 export default function Widgets({ onInsert, widgets }) {
-  const groups = Object.groupBy(widgets, ({ group }) => group);
+  const [insertMode, setInsertMode] = useState("sibling");
+  const groups = groupBy(
+    widgets.filter((w) => w.group !== null),
+    ({ group }) => group
+  );
 
   const renderWidgets = (wa) => {
     return wa.map((w, i) => (
-      <Btn key={i} onClick={() => onInsert(w.name, w.component)}>
+      <Btn key={i} onClick={() => onInsert(w.name, w.component, insertMode)}>
         {w.name}
       </Btn>
     ));
@@ -50,6 +56,18 @@ export default function Widgets({ onInsert, widgets }) {
       >
         WIDGETS
       </Typography>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Typography>Child</Typography>
+          <Switch
+            checked={insertMode === "sibling"}
+            onChange={(e) =>
+              setInsertMode(e.target.checked ? "sibling" : "child")
+            }
+          />
+          <Typography>Sibling</Typography>
+        </Stack>
+      </Box>
       {renderWidgetGroups()}
     </Box>
   );
