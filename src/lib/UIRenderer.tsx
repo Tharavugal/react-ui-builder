@@ -1,15 +1,18 @@
 import { Box, Card, CardContent, Divider, Typography } from "@mui/material";
+import { getInObj } from "@opentf/utils";
 import { createElement } from "react";
 
 type Props = {
-  tree: Record<string, unknown>;
+  code: Record<string, unknown>;
+  getData: () => Record<string, unknown>;
   selectionPath: string;
   onSelect: (p: string) => void;
   edit: boolean;
 };
 
 export default function UIRenderer({
-  tree,
+  code,
+  getData,
   selectionPath,
   onSelect,
   edit = false,
@@ -61,11 +64,13 @@ export default function UIRenderer({
       }
 
       case "Heading": {
-        const { text, ...restProps } = props;
+        const { text, binding, ...restProps } = props;
+        const txt = binding ? getInObj(getData(), binding) : text;
+
         return createElement(
           Typography,
           { sx: { p: 0, ...styles }, variant: "h6", ...restProps },
-          text
+          txt
         );
       }
       case "Text": {
@@ -80,8 +85,16 @@ export default function UIRenderer({
         const { ...restProps } = props;
         return createElement(
           Divider,
-          { sx: { borderColor: 'darkgray', ...styles }, ...restProps },
+          { sx: { borderColor: "darkgray", ...styles }, ...restProps },
           null
+        );
+      }
+      case "UL": {
+        const { items, ...restProps } = props;
+        return createElement(
+          Box,
+          { component: "ul", sx: { ...styles }, ...restProps },
+          items.map((it, i) => <li key={i}>{it}</li>)
         );
       }
       case "Card": {
@@ -103,5 +116,5 @@ export default function UIRenderer({
     });
   };
 
-  return <Box>{renderComponent(tree, "")}</Box>;
+  return <Box>{renderComponent(code, "")}</Box>;
 }

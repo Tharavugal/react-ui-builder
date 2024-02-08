@@ -3,10 +3,11 @@ export default function HeadingWidget() {
     name: "Heading",
     group: "Text",
     component: {
-      props: { text: "", variant: "h6", sx: {} },
+      props: { text: "", binding: "", variant: "h6", sx: {} },
     },
     propTypes: [
       { name: "text", type: "text", label: "Text" },
+      { name: "binding", type: "binding", label: "Data Binding" },
       {
         name: "variant",
         type: "select",
@@ -17,7 +18,7 @@ export default function HeadingWidget() {
           { label: "H3", value: "h3" },
           { label: "H4", value: "h4" },
           { label: "H5", value: "h5" },
-          { label: "H6", value: "h6" }
+          { label: "H6", value: "h6" },
         ],
       },
       {

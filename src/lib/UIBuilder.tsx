@@ -12,11 +12,14 @@ import TextWidget from "./widgets/Text";
 import FlexWidget from "./widgets/Flex";
 import RootWidget from "./widgets/Root";
 import DividerWidget from "./widgets/Divider";
+import ULWidget from "./widgets/UL";
+import { Editor } from "@opentf/react-code-editor";
 
 export default function UIBuilder() {
   const [tab, setTab] = useState(0);
   const [state, setState] = useState({
-    UI: null,
+    code: null,
+    data: "{}",
     selectionPath: "",
   });
   const widgets = [
@@ -25,14 +28,15 @@ export default function UIBuilder() {
     HeadingWidget(),
     TextWidget(),
     FlexWidget(),
-    DividerWidget()
+    DividerWidget(),
+    ULWidget(),
   ];
 
   useEffect(() => {
     const rootWidget = RootWidget();
     setState((s) => ({
       ...s,
-      UI: { name: rootWidget.name, ...rootWidget.component },
+      code: { name: rootWidget.name, ...rootWidget.component },
     }));
   }, []);
 
@@ -49,7 +53,7 @@ export default function UIBuilder() {
       insertMode === "child"
         ? state.selectionPath
         : state.selectionPath.split(".").slice(0, -1).join(".");
-    const curObj = getInObj(state.UI, objPath) ?? state.UI;
+    const curObj = getInObj(state.code, objPath) ?? state.code;
     const index =
       insertMode === "child"
         ? (curObj.children ?? []).length
@@ -65,7 +69,7 @@ export default function UIBuilder() {
 
   const handlePropUpdate = (propName: string, val: unknown) => {
     const UI = setInObj(
-      state.UI,
+      state.code,
       `${state.selectionPath}.props.${propName}`,
       val
     );
@@ -81,7 +85,7 @@ export default function UIBuilder() {
       return;
     }
 
-    const UI = state.UI;
+    const UI = state.code;
     if (delInObj(UI, state.selectionPath)) {
       const selectionPath = state.selectionPath
         .split(".")
@@ -95,12 +99,13 @@ export default function UIBuilder() {
     <>
       <Tabs value={tab} onChange={(e, val) => setTab(val)} centered>
         <Tab label="Preview" />
+        <Tab label="Data" />
         <Tab label="Code" />
       </Tabs>
       <Box sx={{ p: 3, height: "700px" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <BreadCrumbs
-            UI={state.UI}
+            UI={state.code}
             selectionPath={state.selectionPath}
             setSelectionPath={setSelectionPath}
           />
@@ -129,16 +134,28 @@ export default function UIBuilder() {
               overflowY: "auto",
             }}
           >
-            {tab === 0 ? (
+            {tab === 0 && (
               <UIRenderer
-                tree={state.UI}
+                code={state.code}
+                getData={() => JSON.parse(state.data)}
                 selectionPath={state.selectionPath}
                 onSelect={setSelectionPath}
                 edit
               />
-            ) : (
+            )}
+            {tab === 1 && (
+              <Editor
+                title="Data"
+                theme="Dark"
+                value={state.data}
+                onChange={(str) => setState({ ...state, data: str })}
+                lang="JSON"
+                style={{ height: "100%" }}
+              />
+            )}
+            {tab === 2 && (
               <ReactJson
-                src={state.UI}
+                src={state.code}
                 theme="google"
                 name={false}
                 enableClipboard={false}
@@ -149,7 +166,7 @@ export default function UIBuilder() {
           <Box></Box>
           <PropsEditor
             widgets={widgets}
-            component={getInObj(state.UI, state.selectionPath) ?? state.UI}
+            component={getInObj(state.code, state.selectionPath) ?? state.code}
             onUpdate={handlePropUpdate}
           />
         </Box>

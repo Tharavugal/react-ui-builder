@@ -20,6 +20,9 @@ dependencies:
   '@mui/material':
     specifier: ^5.15.7
     version: 5.15.7(@emotion/react@11.11.3)(@emotion/styled@11.11.0)(@types/react@18.2.52)(react-dom@18.2.0)(react@18.2.0)
+  '@opentf/react-code-editor':
+    specifier: ^0.10.0
+    version: 0.10.0(react-dom@18.2.0)(react@18.2.0)
   '@opentf/utils':
     specifier: ^0.23.0
     version: 0.23.0
@@ -729,6 +732,22 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.0
     dev: true
+
+  /@opentf/react-code-editor@0.10.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-RghWyyWBoMUFMPq1orthFJNAPF0pDHldSIu0ydRz/tms1eVY5vW3Q7RkDeIrZKQC2YaWKoJAwkzWww4s78rCew==}
+    peerDependencies:
+      react: '*'
+      react-dom: '*'
+    dependencies:
+      '@opentf/utils': 0.22.1
+      prettier: 2.8.5
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@opentf/utils@0.22.1:
+    resolution: {integrity: sha512-e8rZbdYxScpL0/NftsP8TEjAETycBRyGBAAGyGbT4HbbsG2spq5KKAtVaMNSB8OiHkde8pJ+6vuzom6LTBs2cw==}
+    dev: false
 
   /@opentf/utils@0.23.0:
     resolution: {integrity: sha512-Ok0HjVKVbBwQQY8f9IpNBUEJUr5IKij0cMP1KjUeJNOk8jZuazA9KE/0DOezB20BOz6C9TcjNA103/aJUty3cw==}
@@ -2009,6 +2028,12 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
     dev: true
+
+  /prettier@2.8.5:
+    resolution: {integrity: sha512-3gzuxrHbKUePRBB4ZeU08VNkUcqEHaUaouNt0m7LGP4Hti/NuB07C7PPTM/LkWqXoJYJn2McEo5+kxPNrtQkLQ==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: false
 
   /promise@7.3.1:
     resolution: {integrity: sha512-nolQXZ/4L+bP/UGlkfaIujX9BKxGwmQ9OT4mOt5yvy8iK1h3wqTEJCijzGANTCCl9nWjY41juyAn2K3Q1hLLTg==}
