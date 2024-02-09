@@ -1,3 +1,4 @@
-import UIBuilder from "./UIBuilder";
+import Builder from "./Builder";
+import Renderer from "./Renderer";
 
-export { UIBuilder };
+export { Builder, Renderer };

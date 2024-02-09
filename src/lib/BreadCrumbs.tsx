@@ -1,7 +1,17 @@
-import { Breadcrumbs, Link } from "@mui/material";
+import { Box, Breadcrumbs, Link } from "@mui/material";
 import { getInObj } from "@opentf/utils";
 
-export default function BreadCrumbs({ UI, selectionPath, setSelectionPath }) {
+type Props = {
+  UI: Record<string, unknown> | null;
+  selectionPath: string;
+  setSelectionPath: (s: string) => void;
+};
+
+export default function BreadCrumbs({
+  UI,
+  selectionPath,
+  setSelectionPath,
+}: Props) {
   const renderBreadcrumbItems = () => {
     const items = [
       <Link key="root" underline="hover" onClick={() => setSelectionPath("")}>
@@ -14,14 +24,14 @@ export default function BreadCrumbs({ UI, selectionPath, setSelectionPath }) {
     arr.slice(1).forEach((str, i) => {
       const curSelPath = curPath + "." + str;
       curPath = curSelPath;
-      const obj = getInObj(UI, curPath);
+      const obj = getInObj(UI || {}, curPath) as Record<string, unknown>;
       items.push(
         <Link
           key={i}
           underline="hover"
           onClick={() => setSelectionPath(curSelPath)}
         >
-          {obj?.name}
+          {obj?.name as string}
         </Link>
       );
     });
@@ -30,8 +40,10 @@ export default function BreadCrumbs({ UI, selectionPath, setSelectionPath }) {
   };
 
   return (
-    <Breadcrumbs separator="›" aria-label="breadcrumb">
-      {renderBreadcrumbItems()}
-    </Breadcrumbs>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Breadcrumbs separator="›" aria-label="breadcrumb">
+        {renderBreadcrumbItems()}
+      </Breadcrumbs>
+    </Box>
   );
 }

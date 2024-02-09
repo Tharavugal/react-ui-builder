@@ -3,7 +3,7 @@ import Widgets from "./Widgets";
 import { useEffect, useState } from "react";
 import { getInObj, setInObj, delInObj } from "@opentf/utils";
 import ReactJson from "@microlink/react-json-view";
-import UIRenderer from "./UIRenderer";
+import Renderer from "./Renderer";
 import PropsEditor from "./PropsEditor";
 import HeadingWidget from "./widgets/Heading";
 import ContainerWidget from "./widgets/Container";
@@ -14,8 +14,9 @@ import RootWidget from "./widgets/Root";
 import DividerWidget from "./widgets/Divider";
 import ULWidget from "./widgets/UL";
 import { Editor } from "@opentf/react-code-editor";
+import TreeView from "./TreeView";
 
-export default function UIBuilder() {
+export default function Builder() {
   const [tab, setTab] = useState(0);
   const [state, setState] = useState({
     code: null,
@@ -104,6 +105,11 @@ export default function UIBuilder() {
       </Tabs>
       <Box sx={{ p: 3, height: "700px" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+          <TreeView
+            UI={state.code}
+            selectionPath={state.selectionPath}
+            setSelectionPath={setSelectionPath}
+          />
           <BreadCrumbs
             UI={state.code}
             selectionPath={state.selectionPath}
@@ -135,7 +141,7 @@ export default function UIBuilder() {
             }}
           >
             {tab === 0 && (
-              <UIRenderer
+              <Renderer
                 code={state.code}
                 getData={() => JSON.parse(state.data)}
                 selectionPath={state.selectionPath}

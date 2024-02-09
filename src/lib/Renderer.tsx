@@ -10,7 +10,7 @@ type Props = {
   edit: boolean;
 };
 
-export default function UIRenderer({
+export default function Renderer({
   code,
   getData,
   selectionPath,
