@@ -15,6 +15,8 @@ import ULWidget from "./widgets/UL";
 import { Editor } from "@opentf/react-code-editor";
 import ActionsBar from "./ActionsBar";
 import { getCurIndex, parentPath } from "./utils";
+import AccordionWidget from "./widgets/Accordion";
+import CardWidget from "./widgets/Card";
 
 export default function Builder() {
   const [tab, setTab] = useState(0);
@@ -31,6 +33,8 @@ export default function Builder() {
     FlexWidget(),
     DividerWidget(),
     ULWidget(),
+    AccordionWidget(),
+    CardWidget()
   ];
 
   useEffect(() => {

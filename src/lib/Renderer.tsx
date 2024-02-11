@@ -1,6 +1,16 @@
-import { Box, Card, CardContent, Divider, Typography } from "@mui/material";
-import { getInObj } from "@opentf/utils";
 import { createElement } from "react";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Card,
+  CardContent,
+  Divider,
+  Typography,
+} from "@mui/material";
+import { getInObj } from "@opentf/utils";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 type Props = {
   code: Record<string, unknown>;
@@ -76,6 +86,7 @@ export default function Renderer({
       case "Text": {
         const { text, binding, ...restProps } = props;
         const txt = binding ? getInObj(getData(), binding) : text;
+
         return createElement(
           Typography,
           { sx: { ...styles }, variant: "body1", ...restProps },
@@ -84,6 +95,7 @@ export default function Renderer({
       }
       case "Divider": {
         const { ...restProps } = props;
+
         return createElement(
           Divider,
           { sx: { borderColor: "darkgray", ...styles }, ...restProps },
@@ -93,17 +105,38 @@ export default function Renderer({
       case "UL": {
         const { binding, ...restProps } = props;
         const items = binding ? getInObj(getData(), binding) : [];
+
         return createElement(
           Box,
           { component: "ul", sx: { ...styles }, ...restProps },
           items.map((it, i) => <li key={i}>{it}</li>)
         );
       }
-      case "Card": {
-        const { sx, otherProps } = obj.props;
+      case "Accordion": {
+        const { binding, ...restProps } = props;
+        const obj = binding ? getInObj(getData(), binding) : {};
+
         return (
-          <Card sx={sx}>
-            <CardContent>{renderChildren(otherProps.children)}</CardContent>
+          <Accordion key={key} sx={{ ...styles }} {...restProps}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+              {obj.title}
+            </AccordionSummary>
+            <AccordionDetails>{obj.text}</AccordionDetails>
+          </Accordion>
+        );
+      }
+      case "Card": {
+        const { ...restProps } = props;
+
+        return (
+          <Card sx={{ ...styles }} {...restProps} variant="outlined">
+            <CardContent>
+              {renderChildren(obj.children, compCurPath)}
+            </CardContent>
           </Card>
         );
       }
