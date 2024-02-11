@@ -3,15 +3,11 @@ export default function ULWidget() {
     name: "UL",
     group: "List",
     component: {
-      props: { items: ["line 1", "line 2"], sx: {} },
+      props: { binding: null, sx: {} },
       children: [],
     },
     propTypes: [
-      {
-        name: "items",
-        type: "listItems",
-        label: "Items",
-      },
+      { name: "binding", type: "binding", label: "Data Binding" },
       {
         name: "sx",
         type: "code",

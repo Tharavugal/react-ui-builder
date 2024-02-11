@@ -91,7 +91,8 @@ export default function Renderer({
         );
       }
       case "UL": {
-        const { items, ...restProps } = props;
+        const { binding, ...restProps } = props;
+        const items = binding ? getInObj(getData(), binding) : [];
         return createElement(
           Box,
           { component: "ul", sx: { ...styles }, ...restProps },

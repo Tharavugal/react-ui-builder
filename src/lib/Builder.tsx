@@ -1,20 +1,20 @@
-import { Box, Button, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import Widgets from "./Widgets";
 import { useEffect, useState } from "react";
-import { getInObj, setInObj, delInObj } from "@opentf/utils";
+import { getInObj, setInObj } from "@opentf/utils";
 import ReactJson from "@microlink/react-json-view";
 import Renderer from "./Renderer";
 import PropsEditor from "./PropsEditor";
 import HeadingWidget from "./widgets/Heading";
 import ContainerWidget from "./widgets/Container";
-import BreadCrumbs from "./BreadCrumbs";
 import TextWidget from "./widgets/Text";
 import FlexWidget from "./widgets/Flex";
 import RootWidget from "./widgets/Root";
 import DividerWidget from "./widgets/Divider";
 import ULWidget from "./widgets/UL";
 import { Editor } from "@opentf/react-code-editor";
-import TreeView from "./TreeView";
+import ActionsBar from "./ActionsBar";
+import { getCurIndex, parentPath } from "./utils";
 
 export default function Builder() {
   const [tab, setTab] = useState(0);
@@ -53,13 +53,12 @@ export default function Builder() {
     const objPath =
       insertMode === "child"
         ? state.selectionPath
-        : state.selectionPath.split(".").slice(0, -1).join(".");
+        : parentPath(state.selectionPath);
     const curObj = getInObj(state.code, objPath) ?? state.code;
     const index =
       insertMode === "child"
         ? (curObj.children ?? []).length
-        : Number(state.selectionPath.split(".").slice(-1)[0].match(/\d+/)[0]) +
-          1;
+        : getCurIndex(state.selectionPath) + 1;
     const curSelectionPath = `${objPath}.children[${index}]`;
     (curObj.children ?? []).splice(index, 0, { name, ...obj });
     setState({
@@ -81,21 +80,6 @@ export default function Builder() {
     setState((s) => ({ ...s, selectionPath: path }));
   };
 
-  const handleDelete = () => {
-    if (!state.selectionPath) {
-      return;
-    }
-
-    const UI = state.code;
-    if (delInObj(UI, state.selectionPath)) {
-      const selectionPath = state.selectionPath
-        .split(".")
-        .slice(0, -1)
-        .join(".");
-      setState((s) => ({ ...s, UI, selectionPath }));
-    }
-  };
-
   return (
     <>
       <Tabs value={tab} onChange={(e, val) => setTab(val)} centered>
@@ -104,28 +88,12 @@ export default function Builder() {
         <Tab label="Code" />
       </Tabs>
       <Box sx={{ p: 3, height: "700px" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-          <Box sx={{ display: "flex" }}>
-            <TreeView
-              UI={state.code}
-              selectionPath={state.selectionPath}
-              setSelectionPath={setSelectionPath}
-            />
-            <BreadCrumbs
-              UI={state.code}
-              selectionPath={state.selectionPath}
-              setSelectionPath={setSelectionPath}
-            />
-          </Box>
-          <Button
-            variant="outlined"
-            color="error"
-            size="small"
-            onClick={handleDelete}
-          >
-            Delete
-          </Button>
-        </Box>
+        <ActionsBar
+          code={state.code}
+          selectionPath={state.selectionPath}
+          setSelectionPath={setSelectionPath}
+          setState={setState}
+        />
         <Box
           sx={{
             display: "grid",
