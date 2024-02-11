@@ -61,7 +61,7 @@ export default function TreeView({
       <Button
         variant="outlined"
         size="small"
-        color="secondary"
+        color="info"
         sx={{ mr: 2 }}
         onClick={() => setShowTreeView(true)}
       >
@@ -76,7 +76,6 @@ export default function TreeView({
         <DialogTitle>UI Tree</DialogTitle>
         <Box sx={{ my: 1, px: 2 }}>
           <MUITreeView
-            aria-label="file system navigator"
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
             expanded={expanded}

@@ -3,7 +3,7 @@ export default function HeadingWidget() {
     name: "Heading",
     group: "Text",
     component: {
-      props: { text: "", binding: "", variant: "h6", sx: {} },
+      props: { text: "", binding: null, variant: "h6", sx: {} },
     },
     propTypes: [
       { name: "text", type: "text", label: "Text" },

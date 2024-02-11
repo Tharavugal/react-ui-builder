@@ -105,16 +105,18 @@ export default function Builder() {
       </Tabs>
       <Box sx={{ p: 3, height: "700px" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-          <TreeView
-            UI={state.code}
-            selectionPath={state.selectionPath}
-            setSelectionPath={setSelectionPath}
-          />
-          <BreadCrumbs
-            UI={state.code}
-            selectionPath={state.selectionPath}
-            setSelectionPath={setSelectionPath}
-          />
+          <Box sx={{ display: "flex" }}>
+            <TreeView
+              UI={state.code}
+              selectionPath={state.selectionPath}
+              setSelectionPath={setSelectionPath}
+            />
+            <BreadCrumbs
+              UI={state.code}
+              selectionPath={state.selectionPath}
+              setSelectionPath={setSelectionPath}
+            />
+          </Box>
           <Button
             variant="outlined"
             color="error"
@@ -154,7 +156,12 @@ export default function Builder() {
                 title="Data"
                 theme="Dark"
                 value={state.data}
-                onChange={(str) => setState({ ...state, data: str })}
+                onChange={(str) => {
+                  try {
+                    JSON.parse(str);
+                    setState({ ...state, data: str });
+                  } catch (error) {}
+                }}
                 lang="JSON"
                 style={{ height: "100%" }}
               />
@@ -174,6 +181,7 @@ export default function Builder() {
             widgets={widgets}
             component={getInObj(state.code, state.selectionPath) ?? state.code}
             onUpdate={handlePropUpdate}
+            data={state.data}
           />
         </Box>
       </Box>

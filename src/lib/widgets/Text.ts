@@ -3,9 +3,10 @@ export default function TextWidget() {
     name: "Text",
     group: "Text",
     component: {
-      props: { text: "", sx: {} },
+      props: { binding: null, text: "", sx: {} },
     },
     propTypes: [
+      { name: "binding", type: "binding", label: "Data Binding" },
       { name: "text", type: "text", multi: true, label: "Text" },
       {
         name: "sx",

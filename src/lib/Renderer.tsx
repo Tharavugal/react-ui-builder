@@ -74,11 +74,12 @@ export default function Renderer({
         );
       }
       case "Text": {
-        const { text, ...restProps } = props;
+        const { text, binding, ...restProps } = props;
+        const txt = binding ? getInObj(getData(), binding) : text;
         return createElement(
           Typography,
           { sx: { ...styles }, variant: "body1", ...restProps },
-          text
+          txt
         );
       }
       case "Divider": {
