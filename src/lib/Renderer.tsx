@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import { ReactNode, SyntheticEvent, createElement } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -10,11 +10,13 @@ import {
   Typography,
 } from "@mui/material";
 import { getInObj } from "@opentf/utils";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
+import type { JsonObject } from "type-fest";
+import type { Component } from "./types";
 
 type Props = {
-  code: Record<string, unknown>;
-  getData: () => Record<string, unknown>;
+  code: Component | null;
+  data: JsonObject;
   selectionPath: string;
   onSelect: (p: string) => void;
   edit: boolean;
@@ -22,29 +24,33 @@ type Props = {
 
 export default function Renderer({
   code,
-  getData,
+  data,
   selectionPath,
   onSelect,
   edit = false,
 }: Props) {
+  if (code === null) {
+    return null;
+  }
+
   const renderComponent = (
-    obj: Record<string, unknown>,
+    obj: Component,
     path: string,
-    key = null
+    key: null | number
   ) => {
     if (!obj) {
       return null;
     }
 
     const compCurPath = key === null ? path : path + `.children[${key}]`;
-    const { sx, ...otherProps } = obj.props as object;
+    const { sx, ...otherProps } = obj.props;
     const styles = { ...sx };
-    const props = { key, ...otherProps };
+    const props = { key, ...otherProps } as Record<string, unknown>;
 
     if (edit) {
       styles["border"] =
         selectionPath === compCurPath ? "1px dashed red" : styles["border"];
-      props["onClick"] = (e) => {
+      props["onClick"] = (e: SyntheticEvent) => {
         e.stopPropagation();
         onSelect(compCurPath);
       };
@@ -55,42 +61,42 @@ export default function Renderer({
         return createElement(
           Box,
           { key: "Root", sx: { ...styles } },
-          renderChildren(obj.children, compCurPath)
+          renderChildren(obj.children || [], compCurPath)
         );
       }
       case "Container": {
         return createElement(
           Box,
           { sx: { ...styles }, ...props },
-          renderChildren(obj.children, compCurPath)
+          renderChildren(obj.children || [], compCurPath)
         );
       }
       case "Flex": {
         return createElement(
           Box,
           { sx: { ...styles, display: "flex", flexWrap: "wrap" }, ...props },
-          renderChildren(obj.children, compCurPath)
+          renderChildren(obj.children || [], compCurPath)
         );
       }
 
       case "Heading": {
         const { text, binding, ...restProps } = props;
-        const txt = binding ? getInObj(getData(), binding) : text;
+        const txt = binding ? getInObj(data, binding as string) : text;
 
         return createElement(
           Typography,
           { sx: { p: 0, ...styles }, variant: "h6", ...restProps },
-          txt
+          txt as string
         );
       }
       case "Text": {
         const { text, binding, ...restProps } = props;
-        const txt = binding ? getInObj(getData(), binding) : text;
+        const txt = binding ? getInObj(data, binding as string) : text;
 
         return createElement(
           Typography,
           { sx: { ...styles }, variant: "body1", ...restProps },
-          txt
+          txt as string
         );
       }
       case "Divider": {
@@ -104,7 +110,9 @@ export default function Renderer({
       }
       case "UL": {
         const { binding, ...restProps } = props;
-        const items = binding ? getInObj(getData(), binding) : [];
+        const items = binding
+          ? (getInObj(data, binding as string) as string[])
+          : [];
 
         return createElement(
           Box,
@@ -114,10 +122,12 @@ export default function Renderer({
       }
       case "Accordion": {
         const { binding, ...restProps } = props;
-        const obj = binding ? getInObj(getData(), binding) : {};
+        const obj = binding
+          ? (getInObj(data, binding as string) as Record<string, string>)
+          : {};
 
         return (
-          <Accordion key={key} sx={{ ...styles }} {...restProps}>
+          <Accordion sx={{ ...styles }} {...restProps}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -135,7 +145,7 @@ export default function Renderer({
         return (
           <Card sx={{ ...styles }} {...restProps} variant="outlined">
             <CardContent>
-              {renderChildren(obj.children, compCurPath)}
+              {renderChildren(obj.children as Component[], compCurPath)}
             </CardContent>
           </Card>
         );
@@ -145,11 +155,11 @@ export default function Renderer({
     }
   };
 
-  const renderChildren = (chldrn, path) => {
+  const renderChildren = (chldrn: Component[], path: string): ReactNode[] => {
     return chldrn.map((obj, i) => {
       return renderComponent(obj, path, i);
     });
   };
 
-  return <Box>{renderComponent(code, "")}</Box>;
+  return <Box>{renderComponent(code, "", null)}</Box>;
 }

@@ -1,5 +1,7 @@
+import { Widget } from "../types";
+
 export default function FlexWidget() {
-  return {
+  const w: Widget = {
     name: "Flex",
     group: "Layout",
     component: {
@@ -15,4 +17,6 @@ export default function FlexWidget() {
       },
     ],
   };
+
+  return w;
 }

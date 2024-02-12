@@ -1,11 +1,14 @@
 import { Box, Button, Dialog, DialogTitle } from "@mui/material";
 import { useEffect, useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  ExpandMore as ExpandMoreIcon,
+  ChevronRight as ChevronRightIcon,
+} from "@mui/icons-material";
 import { TreeView as MUITreeView, TreeItem } from "@mui/x-tree-view";
+import type { JsonObject } from "type-fest";
 
 type Props = {
-  UI: Record<string, unknown> | null;
+  UI: JsonObject;
   selectionPath: string;
   setSelectionPath: (s: string) => void;
 };
@@ -28,11 +31,11 @@ export default function TreeView({
     setSelectionPath(nodeIds as string);
   };
 
-  const renderTreeItems = (pNode: Record<string, unknown>, key: string) => (
+  const renderTreeItems = (pNode: JsonObject, key: string) => (
     <TreeItem key={key} nodeId={key} label={pNode.name as string}>
       {Array.isArray(pNode.children)
         ? pNode.children.map((node, i) =>
-            renderTreeItems(node, `${key}.children[${i}]`)
+            renderTreeItems(node as JsonObject, `${key}.children[${i}]`)
           )
         : null}
     </TreeItem>

@@ -1,5 +1,7 @@
+import { Widget } from "../types";
+
 export default function ULWidget() {
-  return {
+  const w: Widget = {
     name: "UL",
     group: "List",
     component: {
@@ -16,4 +18,6 @@ export default function ULWidget() {
       },
     ],
   };
+
+  return w;
 }

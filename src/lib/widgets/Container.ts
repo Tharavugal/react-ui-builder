@@ -1,5 +1,7 @@
+import { Widget } from "../types";
+
 export default function ContainerWidget() {
-  return {
+  const w: Widget = {
     name: "Container",
     group: "Layout",
     component: {
@@ -15,4 +17,6 @@ export default function ContainerWidget() {
       },
     ],
   };
+
+  return w;
 }

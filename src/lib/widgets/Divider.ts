@@ -1,5 +1,7 @@
+import { Widget } from "../types";
+
 export default function DividerWidget() {
-  return {
+  const w: Widget = {
     name: "Divider",
     group: "Layout",
     component: {
@@ -15,4 +17,6 @@ export default function DividerWidget() {
       },
     ],
   };
+
+  return w;
 }

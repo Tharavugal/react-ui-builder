@@ -1,5 +1,7 @@
+import { Widget } from "../types";
+
 export default function RootWidget() {
-  return {
+  const w: Widget = {
     name: "Root",
     group: null,
     component: {
@@ -15,4 +17,6 @@ export default function RootWidget() {
       },
     ],
   };
+
+  return w;
 }

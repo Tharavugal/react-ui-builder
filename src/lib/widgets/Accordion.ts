@@ -1,5 +1,7 @@
+import { Widget } from "../types";
+
 export default function AccordionWidget() {
-  return {
+  const w: Widget = {
     name: "Accordion",
     group: "Surface",
     component: {
@@ -16,4 +18,6 @@ export default function AccordionWidget() {
       },
     ],
   };
+
+  return w;
 }

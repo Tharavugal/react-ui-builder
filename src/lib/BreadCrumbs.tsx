@@ -2,7 +2,7 @@ import { Box, Breadcrumbs, Link } from "@mui/material";
 import { getInObj } from "@opentf/utils";
 
 type Props = {
-  UI: Record<string, unknown> | null;
+  UI: object | null;
   selectionPath: string;
   setSelectionPath: (s: string) => void;
 };

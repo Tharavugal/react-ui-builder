@@ -17,10 +17,24 @@ import ActionsBar from "./ActionsBar";
 import { getCurIndex, parentPath } from "./utils";
 import AccordionWidget from "./widgets/Accordion";
 import CardWidget from "./widgets/Card";
+import type { JsonObject } from "type-fest";
+import type { Component } from "./types";
 
-export default function Builder() {
+export type Props = {
+  code: Component | null;
+  data: string;
+  onSave: (values: { code: JsonObject; data: string }) => void;
+};
+
+type StateType = {
+  code: Component | null;
+  data: string;
+  selectionPath: string;
+};
+
+export default function Builder({ code, data, onSave }: Props) {
   const [tab, setTab] = useState(0);
-  const [state, setState] = useState({
+  const [state, setState] = useState<StateType>({
     code: null,
     data: "{}",
     selectionPath: "",
@@ -34,22 +48,22 @@ export default function Builder() {
     DividerWidget(),
     ULWidget(),
     AccordionWidget(),
-    CardWidget()
+    CardWidget(),
   ];
 
   useEffect(() => {
     const rootWidget = RootWidget();
     setState((s) => ({
       ...s,
-      code: { name: rootWidget.name, ...rootWidget.component },
+      code: code ?? {
+        ...rootWidget.component,
+        name: rootWidget.name,
+      },
+      data: data ?? "{}",
     }));
-  }, []);
+  }, [code, data]);
 
-  const insert = (
-    name: string,
-    obj: Record<string, unknown>,
-    insertMode: string
-  ) => {
+  const insert = (component: Component, insertMode: string) => {
     if (insertMode === "sibling" && state.selectionPath === "") {
       return;
     }
@@ -58,13 +72,18 @@ export default function Builder() {
       insertMode === "child"
         ? state.selectionPath
         : parentPath(state.selectionPath);
-    const curObj = getInObj(state.code, objPath) ?? state.code;
+    const curObj =
+      (getInObj(state.code as unknown as object, objPath) as JsonObject) ??
+      state.code;
+    if (!curObj) {
+      return;
+    }
     const index =
       insertMode === "child"
-        ? (curObj.children ?? []).length
+        ? ((curObj.children as unknown[]) ?? []).length
         : getCurIndex(state.selectionPath) + 1;
     const curSelectionPath = `${objPath}.children[${index}]`;
-    (curObj.children ?? []).splice(index, 0, { name, ...obj });
+    ((curObj.children as unknown[]) ?? []).splice(index, 0, component);
     setState({
       ...state,
       selectionPath: curSelectionPath,
@@ -72,12 +91,12 @@ export default function Builder() {
   };
 
   const handlePropUpdate = (propName: string, val: unknown) => {
-    const UI = setInObj(
-      state.code,
+    setInObj(
+      state.code as unknown as object,
       `${state.selectionPath}.props.${propName}`,
       val
     );
-    setState({ ...state, UI });
+    setState({ ...state });
   };
 
   const setSelectionPath = (path: string) => {
@@ -86,7 +105,7 @@ export default function Builder() {
 
   return (
     <>
-      <Tabs value={tab} onChange={(e, val) => setTab(val)} centered>
+      <Tabs value={tab} onChange={(_e, val) => setTab(val)} centered>
         <Tab label="Preview" />
         <Tab label="Data" />
         <Tab label="Code" />
@@ -94,9 +113,10 @@ export default function Builder() {
       <Box sx={{ p: 3, height: "700px" }}>
         <ActionsBar
           code={state.code}
+          data={state.data}
           selectionPath={state.selectionPath}
           setSelectionPath={setSelectionPath}
-          setState={setState}
+          onSave={onSave}
         />
         <Box
           sx={{
@@ -117,7 +137,7 @@ export default function Builder() {
             {tab === 0 && (
               <Renderer
                 code={state.code}
-                getData={() => JSON.parse(state.data)}
+                data={JSON.parse(state.data)}
                 selectionPath={state.selectionPath}
                 onSelect={setSelectionPath}
                 edit
@@ -132,7 +152,9 @@ export default function Builder() {
                   try {
                     JSON.parse(str);
                     setState({ ...state, data: str });
-                  } catch (error) {}
+                  } catch (error) {
+                    console.log(error);
+                  }
                 }}
                 lang="JSON"
                 style={{ height: "100%" }}
@@ -140,7 +162,7 @@ export default function Builder() {
             )}
             {tab === 2 && (
               <ReactJson
-                src={state.code}
+                src={state.code as unknown as object}
                 theme="google"
                 name={false}
                 enableClipboard={false}
@@ -151,9 +173,10 @@ export default function Builder() {
           <Box></Box>
           <PropsEditor
             widgets={widgets}
-            component={getInObj(state.code, state.selectionPath) ?? state.code}
-            onUpdate={handlePropUpdate}
+            code={state.code}
+            selectionPath={state.selectionPath}
             data={state.data}
+            onUpdate={handlePropUpdate}
           />
         </Box>
       </Box>

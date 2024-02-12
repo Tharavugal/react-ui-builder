@@ -2,26 +2,41 @@ import { Box, Button, IconButton } from "@mui/material";
 import TreeView from "./TreeView";
 import BreadCrumbs from "./BreadCrumbs";
 import { delInObj, getInObj } from "@opentf/utils";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import {
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+} from "@mui/icons-material";
 import { getCurIndex, parentPath } from "./utils";
 import { move } from "@opentf/utils";
+import type { JsonObject } from "type-fest";
+import { Component } from "./types";
+
+type Props = {
+  code: Component | null;
+  data: string;
+  selectionPath: string;
+  setSelectionPath: (s: string) => void;
+  onSave: (values: { code: JsonObject; data: string }) => void;
+};
 
 export default function ActionsBar({
   code,
+  data,
   selectionPath,
   setSelectionPath,
-  setState,
-}) {
+  onSave,
+}: Props) {
   const handleDelete = () => {
     if (!selectionPath) {
       return;
     }
-
-    const UI = code;
-    if (delInObj(UI, selectionPath)) {
-      setState((s) => ({ ...s, UI, selectionPath: parentPath(selectionPath) }));
+    if (delInObj(code, selectionPath)) {
+      setSelectionPath(parentPath(selectionPath));
     }
+  };
+
+  const handleSave = () => {
+    onSave({ code: code as JsonObject, data });
   };
 
   const handleMoveUp = () => {
@@ -30,33 +45,30 @@ export default function ActionsBar({
       return;
     }
     const path = parentPath(selectionPath);
-    const arr = getInObj(code, path + ".children");
+    const arr = getInObj(code as unknown as object, path + ".children");
     move(arr as unknown[], index, index - 1);
-    setState((s) => ({
-      ...s,
-      selectionPath: path + `.children[${index - 1}]`,
-    }));
+    setSelectionPath(path + `.children[${index - 1}]`);
   };
 
   const handleMoveDown = () => {
     const index = getCurIndex(selectionPath);
     const path = parentPath(selectionPath);
-    const arr = getInObj(code, path + ".children") as unknown[];
+    const arr = getInObj(
+      code as unknown as object,
+      path + ".children"
+    ) as unknown[];
     if (index >= arr.length - 1) {
       return;
     }
     move(arr as unknown[], index, index + 1);
-    setState((s) => ({
-      ...s,
-      selectionPath: path + `.children[${index + 1}]`,
-    }));
+    setSelectionPath(path + `.children[${index + 1}]`);
   };
 
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
       <Box sx={{ display: "flex" }}>
         <TreeView
-          UI={code}
+          UI={code as JsonObject}
           selectionPath={selectionPath}
           setSelectionPath={setSelectionPath}
         />
@@ -80,6 +92,15 @@ export default function ActionsBar({
           onClick={handleDelete}
         >
           Delete
+        </Button>
+        <Button
+          variant="contained"
+          color="success"
+          size="small"
+          onClick={handleSave}
+          sx={{ ml: 1 }}
+        >
+          Save
         </Button>
       </Box>
     </Box>

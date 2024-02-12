@@ -1,5 +1,7 @@
+import { Widget } from "../types";
+
 export default function TextWidget() {
-  return {
+  const w: Widget = {
     name: "Text",
     group: "Text",
     component: {
@@ -16,4 +18,6 @@ export default function TextWidget() {
       },
     ],
   };
+
+  return w;
 }

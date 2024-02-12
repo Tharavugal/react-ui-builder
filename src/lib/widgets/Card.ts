@@ -1,7 +1,9 @@
+import { Widget } from "../types";
+
 export default function CardWidget() {
-  return {
+  const w: Widget = {
     name: "Card",
-    group: 'Surface',
+    group: "Surface",
     component: {
       props: { sx: { p: 1, m: 1 } },
       children: [],
@@ -15,4 +17,6 @@ export default function CardWidget() {
       },
     ],
   };
+
+  return w;
 }

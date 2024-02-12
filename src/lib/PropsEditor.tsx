@@ -12,28 +12,37 @@ import {
   Typography,
 } from "@mui/material";
 import { TreeView as MUITreeView, TreeItem } from "@mui/x-tree-view";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  ChevronRight as ChevronRightIcon,
+  ExpandMore as ExpandMoreIcon,
+} from "@mui/icons-material";
 import { useState } from "react";
-import { isObj } from "@opentf/utils";
+import { getInObj, isObj } from "@opentf/utils";
+import type { JsonObject } from "type-fest";
+import type { Component, Widget } from "./types";
 
-function BindingPropField({ name, data, onUpdate, value }) {
+type BindingProps = {
+  name: string;
+  data: string;
+  onUpdate: (name: string, value: string) => void;
+  value: string;
+};
+
+function BindingPropField({ name, data, onUpdate, value }: BindingProps) {
   const [opem, setOpen] = useState(false);
   const [dataPath, setDataPath] = useState("");
 
-  const handleSelect = (_e, nodeIds) => {
+  const handleSelect = (_e: React.SyntheticEvent, nodeIds: string) => {
     setDataPath(nodeIds);
-    if (nodeIds) {
-    }
   };
 
-  const renderTreeItems = (pNode, name, key) => {
+  const renderTreeItems = (pNode: JsonObject, name: string, key: string) => {
     const keys = isObj(pNode) ? Object.keys(pNode) : [];
 
     return (
       <TreeItem key={key} nodeId={key} label={name}>
         {keys.map((node) =>
-          renderTreeItems(pNode[node], node, `${key}.${node}`)
+          renderTreeItems(pNode[node] as JsonObject, node, `${key}.${node}`)
         )}
       </TreeItem>
     );
@@ -86,51 +95,82 @@ function BindingPropField({ name, data, onUpdate, value }) {
   );
 }
 
-export default function PropsEditor({ widgets, component, onUpdate, data }) {
-  if (!component) {
+type Props = {
+  widgets: Widget[];
+  code: Component | null;
+  data: string;
+  selectionPath: string;
+  onUpdate: (name: string, value: string) => void;
+};
+
+export default function PropsEditor({
+  widgets = [],
+  code,
+  data,
+  selectionPath,
+  onUpdate,
+}: Props) {
+  const component = (getInObj(code as unknown as object, selectionPath) ??
+    code) as JsonObject;
+
+  if (component === null) {
     return null;
   }
 
   const widget = widgets.find((w) => w.name === component.name);
 
+  if (!widget) {
+    return null;
+  }
+
   const renderFields = () => {
     const fields = widget.propTypes.map((pt, i) => {
+      if (!component.props) {
+        return null;
+      }
+
       switch (pt.type) {
         case "binding":
           return (
             <BindingPropField
               key={i}
-              name={pt.name}
+              name={pt.name as string}
               data={data}
               onUpdate={onUpdate}
-              value={component.props[pt.name]}
+              value={
+                (component.props as JsonObject)[pt.name as string] as string
+              }
             />
           );
         case "text":
           return (
             <TextField
-              multiline={pt.multi}
+              multiline={pt.multi as boolean}
               sx={{ my: 1 }}
               key={i}
-              label={pt.label}
-              value={component.props[pt.name]}
-              onChange={(e) => onUpdate(pt.name, e.target.value)}
+              label={pt.label as string}
+              value={
+                (component.props as JsonObject)[pt.name as string] as string
+              }
+              onChange={(e) => onUpdate(pt.name as string, e.target.value)}
             />
           );
         case "select":
           return (
             <FormControl key={i} fullWidth sx={{ my: 1 }}>
-              <InputLabel id="select-label">{pt.label}</InputLabel>
+              <InputLabel id="select-label">{pt.label as string}</InputLabel>
               <Select
                 labelId="select-label"
                 key={i}
-                label={pt.label}
-                value={component.props[pt.name]}
-                onChange={(e) => onUpdate(pt.name, e.target.value)}
+                label={pt.label as string}
+                value={(component.props as JsonObject)[pt.name as string]}
+                onChange={(e) =>
+                  onUpdate(pt.name as string, e.target.value as string)
+                }
               >
-                {pt.options.map((o, i) => (
-                  <MenuItem key={i} value={o.value}>
-                    {o.label}
+                {(pt.options as JsonObject[]).map((o, i) => (
+                  <MenuItem key={i} value={o.value as string}>
+                    {o.label as string}
                   </MenuItem>
                 ))}
               </Select>

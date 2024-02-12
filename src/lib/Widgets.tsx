@@ -1,6 +1,7 @@
 import { Box, Button, Divider, Stack, Switch, Typography } from "@mui/material";
 import { groupBy } from "@opentf/utils";
 import { useState } from "react";
+import { Component, Widget } from "./types";
 
 function Btn({ sx = {}, ...OtherProps }) {
   return (
@@ -13,16 +14,24 @@ function Btn({ sx = {}, ...OtherProps }) {
   );
 }
 
-export default function Widgets({ onInsert, widgets }) {
+type Props = {
+  onInsert: (component: Component, insertMode: string) => void;
+  widgets: Widget[];
+};
+
+export default function Widgets({ onInsert, widgets }: Props) {
   const [insertMode, setInsertMode] = useState("sibling");
   const groups = groupBy(
     widgets.filter((w) => w.group !== null),
-    ({ group }) => group
+    (w: Widget) => w.group as string
   );
 
-  const renderWidgets = (wa) => {
+  const renderWidgets = (wa: Widget[]) => {
     return wa.map((w, i) => (
-      <Btn key={i} onClick={() => onInsert(w.name, w.component, insertMode)}>
+      <Btn
+        key={i}
+        onClick={() => onInsert({ name: w.name, ...w.component }, insertMode)}
+      >
         {w.name}
       </Btn>
     ));
