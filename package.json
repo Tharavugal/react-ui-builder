@@ -1,8 +1,30 @@
 {
-  "name": "ui-builder",
-  "private": true,
+  "name": "@tharavugal/ui-builder",
+  "description": "The UI Builder for ReactJS based on MUI.",
+  "keywords": [
+    "react",
+    "ui",
+    "builder",
+    "mui"
+  ],
   "version": "0.0.0",
   "type": "module",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "exports": {
+    "import": "./dist/index.js"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": "git@github.com:Tharavugal/react-ui-builder.git",
+  "author": "Thanga Ganapathy",
+  "license": "MIT",
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc && vite build",
@@ -10,17 +32,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
-    "@fontsource/roboto": "^5.0.8",
     "@microlink/react-json-view": "^1.23.0",
-    "@mui/icons-material": "^5.15.9",
-    "@mui/material": "^5.15.7",
-    "@mui/x-tree-view": "^6.17.0",
     "@opentf/react-code-editor": "^0.10.0",
-    "@opentf/utils": "^0.25.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@opentf/utils": "^0.25.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -31,9 +45,21 @@
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "type-fest": "^4.10.2",
     "typescript": "^5.3.3",
     "vite": "^5.1.1",
     "vite-plugin-dts": "^3.7.2"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/icons-material": "^5.15.9",
+    "@mui/material": "^5.15.7",
+    "@mui/x-tree-view": "^6.17.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
