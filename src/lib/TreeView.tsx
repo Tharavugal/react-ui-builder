@@ -65,7 +65,7 @@ export default function TreeView({
         variant="outlined"
         size="small"
         color="info"
-        sx={{ mr: 2 }}
+        sx={{ mr: 2, alignSelf: "center" }}
         onClick={() => setShowTreeView(true)}
       >
         Tree

@@ -30,8 +30,8 @@ dependencies:
     specifier: ^0.10.0
     version: 0.10.0(react-dom@18.2.0)(react@18.2.0)
   '@opentf/utils':
-    specifier: ^0.25.0
-    version: 0.25.0
+    specifier: ^0.26.0
+    version: 0.26.0
 
 devDependencies:
   '@changesets/cli':
@@ -1057,8 +1057,8 @@ packages:
     resolution: {integrity: sha512-e8rZbdYxScpL0/NftsP8TEjAETycBRyGBAAGyGbT4HbbsG2spq5KKAtVaMNSB8OiHkde8pJ+6vuzom6LTBs2cw==}
     dev: false
 
-  /@opentf/utils@0.25.0:
-    resolution: {integrity: sha512-3tMZMMpYaf82eslNwrAmYhnMGlDb1xeOyqQFwOm/Zq7LmJFUGu4cSryHVQjx3f14sUZPE/cH1VtjCOxf7bJH3w==}
+  /@opentf/utils@0.26.0:
+    resolution: {integrity: sha512-eW3XBUsD7qcNgRHr3E9aYxq3P2+wfaiAplEQl61w+VML6LQHyka+EamnCFXxMoLVUMaIM5qHc19QxZVOpi1JWg==}
     dev: false
 
   /@popperjs/core@2.11.8:

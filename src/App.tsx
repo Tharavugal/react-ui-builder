@@ -29,13 +29,7 @@ function App() {
         <Box sx={{ textAlign: "center" }}>
           <Typography variant="h6">UI Builder</Typography>
         </Box>
-        (
-        <Builder
-          code={state?.code}
-          data={state?.data ?? "{}"}
-          onSave={handleSave}
-        />
-        )
+        <Builder code={state.code} data={state.data} onSave={handleSave} />
       </ThemeProvider>
     </>
   );

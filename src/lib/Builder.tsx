@@ -19,6 +19,7 @@ import AccordionWidget from "./widgets/Accordion";
 import CardWidget from "./widgets/Card";
 import type { JsonObject } from "type-fest";
 import type { Component } from "./types";
+import { isJSON } from "@opentf/utils";
 
 export type Props = {
   code: Component | null;
@@ -35,8 +36,8 @@ type StateType = {
 export default function Builder({ code, data, onSave }: Props) {
   const [tab, setTab] = useState(0);
   const [state, setState] = useState<StateType>({
-    code: null,
-    data: "{}",
+    code,
+    data,
     selectionPath: "",
   });
   const widgets = [
@@ -52,16 +53,19 @@ export default function Builder({ code, data, onSave }: Props) {
   ];
 
   useEffect(() => {
-    const rootWidget = RootWidget();
-    setState((s) => ({
-      ...s,
-      code: code ?? {
+    if (code === null) {
+      const rootWidget = RootWidget();
+      const code = {
         ...rootWidget.component,
         name: rootWidget.name,
-      },
-      data: data ?? "{}",
-    }));
-  }, [code, data]);
+      };
+      setState((s) => ({
+        ...s,
+        code,
+      }));
+      onSave({ code: code as JsonObject, data: state.data });
+    }
+  }, []);
 
   const insert = (component: Component, insertMode: string) => {
     if (insertMode === "sibling" && state.selectionPath === "") {
@@ -149,11 +153,8 @@ export default function Builder({ code, data, onSave }: Props) {
                 theme="Dark"
                 value={state.data}
                 onChange={(str) => {
-                  try {
-                    JSON.parse(str);
+                  if (isJSON(str)) {
                     setState({ ...state, data: str });
-                  } catch (error) {
-                    console.log(error);
                   }
                 }}
                 lang="JSON"
