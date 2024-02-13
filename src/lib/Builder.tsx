@@ -2,7 +2,6 @@ import { Box, Tab, Tabs } from "@mui/material";
 import Widgets from "./Widgets";
 import { useEffect, useState } from "react";
 import { getInObj, setInObj } from "@opentf/utils";
-import ReactJson from "@microlink/react-json-view";
 import Renderer from "./Renderer";
 import PropsEditor from "./PropsEditor";
 import HeadingWidget from "./widgets/Heading";
@@ -20,6 +19,8 @@ import CardWidget from "./widgets/Card";
 import type { JsonObject } from "type-fest";
 import type { Component } from "./types";
 import { isJSON } from "@opentf/utils";
+import JsonView from "@uiw/react-json-view";
+import { lightTheme } from "@uiw/react-json-view/light";
 
 export type Props = {
   code: Component | null;
@@ -162,12 +163,11 @@ export default function Builder({ code, data, onSave }: Props) {
               />
             )}
             {tab === 2 && (
-              <ReactJson
-                src={state.code as unknown as object}
-                theme="google"
-                name={false}
-                enableClipboard={false}
+              <JsonView
+                value={state.code as object}
+                style={lightTheme}
                 displayDataTypes={false}
+                collapsed={2}
               />
             )}
           </Box>

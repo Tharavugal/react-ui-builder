@@ -33,9 +33,9 @@
     "publish-packages": "pnpm run build && changeset version && changeset publish"
   },
   "dependencies": {
-    "@microlink/react-json-view": "^1.23.0",
     "@opentf/react-code-editor": "^0.10.0",
-    "@opentf/utils": "^0.26.0"
+    "@opentf/utils": "^0.26.0",
+    "@uiw/react-json-view": "2.0.0-alpha.12"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
