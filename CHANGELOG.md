@@ -1,5 +1,11 @@
 # @tharavugal/ui-builder
 
+## 0.3.0
+
+### Minor Changes
+
+- 05c2266: Changed json viewer.
+
 ## 0.2.0
 
 ### Minor Changes
